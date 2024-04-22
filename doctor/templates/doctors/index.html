@@ -1,0 +1,175 @@
+{% extends "layout.html" %} {% block content %}
+<style>
+  :root {
+    --dispHeader: none !important;
+  }
+
+  #titlea {
+    display: none;
+  }
+
+  .profile-img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 30px;
+  }
+
+  .img_con {
+    display: flex;
+    align-items: center;
+  }
+
+  .username {
+    color: #e96b56;
+    font-size: 1.3rem;
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  window.onload = () => {
+    document.getElementById("titlea").innerText = "Doctors using our solution";
+    document.getElementById("titlea").style.display = "block";
+  };
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // Get the search bar and the list of doctors
+    const searchBar = document.getElementById("searchBar");
+    const doctorsList = document.getElementById("doctorsList");
+
+    // Add an event listener for the search bar
+    searchBar.addEventListener("keyup", function () {
+      // Get the search term and convert it to lowercase
+      const searchTerm = searchBar.value.toLowerCase();
+
+      // Loop through each doctor in the list
+      const doctors = doctorsList.getElementsByClassName("doctor");
+      for (let i = 0; i < doctors.length; i++) {
+        const doctor = doctors[i];
+        // Get the username and email of the doctor
+        const username = doctor
+          .querySelector(".username")
+          .textContent.toLowerCase();
+        const email = doctor.querySelector(".email").textContent.toLowerCase();
+
+        // Check if username or email contains the search term
+        if (username.includes(searchTerm) || email.includes(searchTerm)) {
+          doctor.style.display = ""; // Show the doctor if matched
+        } else {
+          doctor.style.display = "none"; // Hide the doctor if not matched
+        }
+      }
+    });
+  });
+</script>
+
+<div class="my-5">
+  <div class="card py-3 px-4 mt-5">
+    <div class="d-flex align-items-center justify-content-between">
+      <h5 class="">Doctors</h5>
+      <input
+        type="search"
+        id="searchBar"
+        class="form-control w-50 py-2"
+        placeholder="Search by username and email"
+      />
+      <a href="{{ url_for('index') }}" class="btn btn-sm btn-warning text-white"
+        >Go Back</a
+      >
+    </div>
+  </div>
+
+  <div id="doctorsList">
+    {% for doctor in doctors %}
+    <div class="doctor card my-2">
+      <div class="card-body">
+        <div class="media">
+          <div class="img_con">
+            <img
+              src="{{ url_for('static', filename='profile_img/' + doctor.image_file) }}"
+              class="mr-3 profile-img rounded-circle"
+              alt="Doctor Image"
+              width="100"
+            />
+            <table class="table">
+              <tr class="mx-2 w-100 py-0 d-flex">
+                <td
+                  class="d-flex flex-row justify-content-between align-items-center w-100"
+                >
+                  <div>
+                    <h5 class="username">{{ doctor.username }}</h5>
+                    <p class="email" style="font-size: 1rem">
+                      {{ doctor.email }}
+                    </p>
+                  </div>
+                  <form
+                    action="{{ url_for('toggle_request', user_id=doctor.id) }}"
+                    method="POST"
+                  >
+                    {% if doctor.id != current_user.id %}
+                    <!--  -->
+                    {% set request_exists = check_request_exists(doctor.id,
+                    current_user.id) %}
+                    <!--  -->
+                    {% if request_exists == False %}
+                    <button
+                      class="btn btn-sm btn-primary text-white text-sm"
+                      type="submit"
+                    >
+                      Request
+                    </button>
+                    <!--  -->
+                    {% else %}
+                    <!--  -->
+                    {% set request = get_request(doctor.id, current_user.id) %}
+                    <!--  -->
+                    {% if request.status == "pending" %}
+                    <button
+                      class="btn btn-sm btn-warning text-white text-sm"
+                      type="submit"
+                    >
+                      Cancel
+                    </button>
+                    <!--  -->
+                    {% elif request.status == "accepted" %}
+                    <!--  -->
+                    <div class="d-flex flex-row gap-2">
+                      <button
+                        class="btn btn-sm btn-success text-white text-sm"
+                        type="submit"
+                      >
+                        Prevent
+                      </button>
+                      <a
+                        href="{{ url_for('preview_chat', sender_id=current_user.id, receiver_id=doctor.id) }}"
+                        class="btn btn-sm btn-success text-white text-sm"
+                        >Chat</a
+                      >
+                    </div>
+
+                    <!--  -->
+                    {% endif %}
+                    <!--  -->
+                    {% endif %}
+                    <!--  -->
+                    {% endif %}
+                  </form>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="media-body">
+            <p>
+              <span style="color: #e96b56; font-weight: 700">Activities: </span>
+              {{ doctor.posts | length }} Posts
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock content %}

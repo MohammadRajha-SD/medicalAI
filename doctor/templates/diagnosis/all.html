@@ -1,0 +1,114 @@
+{% extends "layout.html" %} {% block content %}
+
+<style>
+  :root {
+    --dispHeader: none !important;
+  }
+
+  #titlea {
+    display: none;
+  }
+
+  .profile-img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 30px;
+  }
+
+  .img_con {
+    display: flex;
+    align-items: center;
+  }
+
+  .username {
+    color: #e96b56;
+    font-size: 1.3rem;
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  window.onload = () => {
+    document.getElementById("titlea").innerText = "Doctors using our solution";
+    document.getElementById("titlea").style.display = "block";
+  };
+</script>
+
+<div class="my-5">
+  {% for patient in patients.items %}
+  <div class="card my-2">
+    <div class="card-body">
+      <div class="media">
+        <div class="img_con">
+          <img
+            src="{{ url_for('static', filename='profile_img/' + patient.doctor.image_file) }}"
+            class="mr-3 profile-img rounded-circle"
+            alt="Doctor Image"
+            width="100"
+          />
+          <div
+            style="
+              margin-left: 10px;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+            "
+          >
+            <h5 class="mt-0 username">{{ patient.doctor.username }}</h5>
+
+            <p style="font-size: 1rem">{{ patient.doctor.email }}</p>
+          </div>
+        </div>
+        <div class="media-body">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Email</th>
+                <th>Phone number</th>
+                <th>Birth date</th>
+                <th>Uploaded at</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% set ct_image = patient.ct_images %}
+              <tr>
+                <td>{{ patient.firstname }} {{ patient.lastname }}</td>
+                <td>{{ patient.email }}</td>
+                <td>{{ patient.phone }}</td>
+                <td>{{ patient.birth_date.strftime('%Y-%m-%d') }}</td>
+                {% if ct_image %}
+                <td>{{ ct_image|map(attribute='created_at')|min }}</td>
+                {% else %}
+                <td class="text-center">--</td>
+                {% endif %}
+              </tr>
+            </tbody>
+          </table>
+          <div class="card">
+            <div class="card-header">CT Images</div>
+            <div class="row m-2 gap-3">
+              {% if ct_image | length > 0 %} {% for img in ct_image %}
+              <div
+                class="card-body col-3 d-flex flex-column card gap-3 align-items-center"
+              >
+                <img
+                  class="rounded"
+                  width="100"
+                  height="100"
+                  src="{{ url_for('static', filename='test_img/'+img.image_file) }}"
+                  alt=""
+                />
+                <p>{{ img.diagnosis }}</p>
+              </div>
+              {% endfor %} {% else %}
+              <h6 class="text-center p-3">No CT Images Uploaded</h6>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %} {% endblock content %}
+</div>

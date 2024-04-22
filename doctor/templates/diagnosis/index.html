@@ -1,0 +1,228 @@
+{% extends "layout.html" %} {% block content %}
+<style>
+  :root {
+    --dispHeader: none !important;
+  }
+
+  .profile-img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .row {
+    margin-top: 20px;
+  }
+
+  .article-metadata {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+  }
+
+  .mr-2 {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .text-mute {
+    font-size: 0.5rem;
+  }
+
+  .article-title {
+    color: black;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+  }
+
+  .diagnosis-img {
+    border-radius: 9px;
+    width: 25vw;
+  }
+
+  .article-content {
+    width: 25vw;
+    text-wrap: wrap;
+  }
+
+  .content-section {
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.295);
+    margin-bottom: 20px;
+    width: 25vw;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    /* Ensure table borders collapse into a single border */
+    margin-bottom: 20px;
+    /* Add some space below the table */
+  }
+
+  /* Style table rows and cells */
+  table tr {
+    border-bottom: 1px solid #ddd;
+    /* Add a bottom border to each row */
+  }
+
+  table td,
+  table th {
+    padding: 8px;
+    /* Add padding to each cell */
+    text-align: left;
+    /* Align text to the left */
+  }
+
+  /* Style the header row */
+  table th {
+    background-color: #f2f2f2;
+    /* Light gray background for header */
+    font-weight: bold;
+    /* Make header text bold */
+  }
+
+  /* Style the table rows when hovering over them */
+  table tr:hover {
+    background-color: #f5f5f5;
+    /* Light background color on hover */
+  }
+
+  .al {
+    color: black;
+    /* Default link color */
+    text-decoration: none;
+    /* Remove underline */
+  }
+
+  /* Style for links on hover */
+  .al:hover {
+    color: rgb(0, 81, 255);
+    /* Change link color on hover */
+  }
+
+  table,
+  .col-md-8 {
+    width: 100% !important;
+    height: 40%;
+  }
+</style>
+
+<script>
+  window.onload = () => {
+    document.querySelectorAll(".nav-item").forEach((n) => {
+      if (n.innerText == "Diagnosis") {
+        n.classList.add("active");
+      }
+    });
+  };
+</script>
+{% set unique_usernames = [] %}
+<div class="card my-5">
+  <div class="card py-3 px-4">
+    <div class="d-flex align-items-center justify-content-between">
+      <h5 class="">Diagnosis</h5>
+      <input
+        type="search"
+        id="searchBar"
+        class="form-control w-50 py-2"
+        placeholder="Search by username, email and phone..."
+      />
+      <a href="{{ url_for('index') }}" class="btn btn-sm btn-warning text-white"
+        >Go Back</a
+      >
+    </div>
+  </div>
+  <div class="table-responsive card-body">
+    <table id="patientTable" class="table table-striped">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Full name</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Latest</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for patient in patients.items %} {% if patient.doctor.username not in
+        unique_usernames %} {% set _ =
+        unique_usernames.append(patient.doctor.username) %}
+        <tr>
+          <td class="username">
+            <a href="{{ url_for('diagnosises', user_id=patient.doctor.id) }}">
+              {{ patient.doctor.username }}
+            </a>
+          </td>
+
+          <td>{{ patient.firstname }} {{ patient.lastname }}</td>
+          <td class="phone">{{ patient.phone }}</td>
+          <td class="email">{{ patient.email }}</td>
+          <td>{{diffHumans(patient.date)}}</td>
+        </tr>
+        {% endif %} {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% for page_num in patients.iter_pages(left_edge=2, right_edge=2,
+  left_current=2, right_current=2) %} {% if page_num %} {% if patients.page ==
+  page_num %}
+  <a
+    class="btn btn-primary mb-4"
+    href="{{ url_for('diagnosis', page=page_num) }}"
+    >{{ page_num }}</a
+  >
+  {% else %}
+  <a
+    class="btn btn-outline-primary mb-4"
+    href="{{ url_for('diagnosis', page=page_num) }}"
+    >{{ page_num }}</a
+  >
+  {% endif %} {% else %} ... {% endif %} {% endfor %}
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Get the search bar and the table
+    const searchBar = document.getElementById("searchBar");
+    const table = document.getElementById("patientTable");
+
+    // Add an event listener for the search bar
+    searchBar.addEventListener("keyup", function () {
+      // Get the search term and convert it to lowercase
+      const searchTerm = searchBar.value.toLowerCase();
+
+      // Loop through each row in the table
+      const rows = table.getElementsByTagName("tr");
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        // Get the username, email, and phone cells in the row
+        const usernameCell = row.querySelector("td.username");
+        const emailCell = row.querySelector("td.email");
+        const phoneCell = row.querySelector("td.phone");
+
+        // Get the text content of each cell and convert it to lowercase
+        const username = usernameCell
+          ? usernameCell.textContent.toLowerCase()
+          : "";
+        const email = emailCell ? emailCell.textContent.toLowerCase() : "";
+        const phone = phoneCell ? phoneCell.textContent.toLowerCase() : "";
+
+        // Check if any of the cell content contains the search term
+        if (
+          username.includes(searchTerm) ||
+          email.includes(searchTerm) ||
+          phone.includes(searchTerm)
+        ) {
+          // Show the row if any cell content matches the search term
+          row.style.display = "";
+        } else {
+          // Hide the row if no cell content matches the search term
+          row.style.display = "none";
+        }
+      }
+    });
+  });
+</script>
+{% endblock content %}

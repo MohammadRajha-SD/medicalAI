@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+{% block content %}
+<style>
+    :root {
+        --dispHeader: none !important;
+    }
+
+    .content-section {
+        margin-top: 5vh;
+    }
+
+    .account-img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-pic-form {
+        display: none;
+    }
+
+    .profile-pic-butt {
+        padding: 10px;
+        border: 1.2px solid rgb(32, 192, 255);
+        width: fit-content;
+        border-radius: 10px;
+        color: rgb(32, 192, 255);
+        height: fit-content;
+        margin-left: 20px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+
+
+    .form-title {
+        padding-bottom: 10px;
+
+    }
+
+    .form-control-label {
+        margin-bottom: 10px;
+        margin-top: 3vh;
+    }
+
+    .btn-outline-info {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .btn-outline-info:hover {
+        color: white;
+    }
+
+    .media {
+        display: flex;
+        align-items: center;
+    }
+</style>
+<script>
+
+    function UploadProfilePic() {
+        document.getElementById('picture').click()
+    }
+    function updateImg() {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            document.querySelector('.account-img').src = e.target.result;
+        }
+
+        reader.readAsDataURL(file);
+
+    }
+
+    window.onload = () => {
+        document.getElementById('picture').addEventListener("change", updateImg)
+        document.querySelectorAll('.nav-item').forEach(n => {
+            if (n.innerText == "Profile") {
+                n.classList.add("active")
+            }
+        })
+    }
+</script>
+
+<div class="content-section">
+
+    <form method="POST" action="" enctype="multipart/form-data">
+        <div class="media">
+            <img class="rounded-circle account-img" src="{{ image_file }}">
+            <p class="profile-pic-butt" onclick="UploadProfilePic()">change ▲
+            </p>
+        </div>
+        <div class="form-group profile-pic-form">
+            {{ form.picture.label() }}
+            {{ form.picture(class="form-control-file") }}
+            {% if form.picture.errors %}
+            {% for error in form.picture.errors %}
+            <span class="text-danger">{{ error }}</span></br>
+            {% endfor %}
+            {% endif %}
+        </div>
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Account Info</legend>
+            <div class="form-group">
+                {{ form.username.label(class="form-control-label") }}
+
+                {% if form.username.errors %}
+                {{ form.username(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.username.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.username(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.email.label(class="form-control-label") }}
+                {% if form.email.errors %}
+                {{ form.email(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.email.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.email(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+</div>
+{% endblock content %}

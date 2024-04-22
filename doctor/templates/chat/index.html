@@ -1,0 +1,156 @@
+{% extends "layout.html" %} {% block content %}
+<style>
+  :root {
+    --dispHeader: none !important;
+  }
+
+  #titlea {
+    display: none;
+  }
+
+  .profile-img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 30px;
+  }
+
+  .img_con {
+    display: flex;
+    align-items: center;
+  }
+
+  .username {
+    color: #e96b56;
+    font-size: 1.3rem;
+    font-weight: 500;
+  }
+</style>
+<style>
+  .card_redesigned {
+    width: 100%; /* Adjust width as needed */
+    height: 400px; /* Adjust height as needed */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-header,
+  .card-footer {
+    background-color: #f0f0f0;
+    padding: 10px;
+    flex-shrink: 0; /* Fixed position for header and footer */
+  }
+
+  .card-body {
+    overflow-y: auto; /* Enable vertical scrolling for the body */
+    flex-grow: 1; /* Allow body to grow and occupy remaining space */
+  }
+
+  .scrollable-content {
+    padding: 10px; /* Add padding to the scrollable content */
+  }
+</style>
+<div class="container my-5">
+  <div class="card card_redesigned">
+    <div class="card-header bg-primary text-white d-flex gap-2">
+      <img
+        src="{{ url_for('static',filename='profile_img/'+user.image_file) }}"
+        width="50"
+        height="50"
+        class="rounded-pill ml-3"
+      />
+      <div class="d-flex flex-column mt-1">
+        {{ user.username|capitalize }}
+        <p style="font-size: 0.8rem">{{ user.email }}</p>
+      </div>
+    </div>
+    <div class="card-body h-50" id="scrollable-body">
+      {% for message in messages %}
+      <!--  -->
+      <div class="scrollable-content">
+        <div class="card d-flex">
+          {% if message.sender_.id == sender_id %}
+          <!--  -->
+          <div
+            class="align-self-end my-0 px-2 bg-success w-100 text-white rounded"
+          >
+            <!--  -->
+            <p class="m-0 py-2">{{ message.message }}</p>
+            <p class="m-0 py-1" style="font-size: 0.6rem">
+              <!-- diffHumans -->
+              {{ date_to(message.sent_at) }}
+            </p>
+          </div>
+
+          {% else %}
+          <div
+            class="align-self-start w-100 my-0 px-2 rounded"
+            style="background: rgba(0, 0, 0, 0.1)"
+          >
+            <!--  -->
+            <p class="m-0 py-2">{{ message.message }}</p>
+            <p class="m-0 py-1" style="font-size: 0.6rem">
+              <!-- diffHumans -->
+              {{ date_to(message.sent_at) }}
+            </p>
+          </div>
+          <!--  -->
+          {% endif%}
+        </div>
+      </div>
+      <!--  -->
+      {% endfor %}
+    </div>
+    <div class="card-footer">
+      <form
+        id="message-form"
+        method="POST"
+        action="{{ url_for('new_message',receiver_id=user.id,sender_id=current_user.id) }}"
+        onsubmit="check()"
+        class="form-group"
+      >
+        <div class="input-group">
+          <input
+            type="text"
+            id="message"
+            name="message"
+            placeholder="Type your message..."
+            class="form-control"
+            required
+          />
+          <button type="submit" class="btn btn-success text-white">Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function check() {
+    localStorage.setItem("previousMessage", "");
+  }
+  // Refresh the chat every 4 seconds
+  window.onload = function () {
+    // Retrieve previous scroll position from local storage
+    let scrollableBody = document.getElementById("scrollable-body");
+    // Scroll to the bottom
+    scrollableBody.scrollTop = scrollableBody.scrollHeight;
+
+    let previousMessage = localStorage.getItem("previousMessage");
+    if (previousMessage) {
+      document.getElementById("message").value = previousMessage;
+    }
+  };
+
+  function refreshChat() {
+    let message = document.getElementById("message").value;
+    localStorage.setItem("previousMessage", message); // Store current message in local storage
+    window.location.reload(); // Reload the window
+  }
+
+  // Refresh the chat every 5 seconds
+  setInterval(refreshChat, 5000);
+</script>
+{% endblock content %}

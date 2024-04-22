@@ -1,0 +1,52 @@
+{"intents": [
+        {"tag": "greeting",
+         "patterns": ["Hi", "How are you", "Is anyone there?", "Hello", "Good day"],
+         "responses": ["Hello, thanks for using", "Good to see you", "Hi there, how can I help?"],
+         "context_set": ""
+        },
+        {"tag": "goodbye",
+         "patterns": ["Bye", "See you later", "Goodbye"],
+         "responses": ["See you later, thanks for using", "Have a nice day"]
+        },
+        {"tag": "thanks",
+         "patterns": ["Thanks", "Thank you", "That's helpful"],
+         "responses": ["Happy to help!", "Any time!", "My pleasure"]
+        },
+        {"tag": "consult",
+         "patterns": ["What can you do?", "I want to do some consults." ],
+         "responses": ["We analyze CT image of patient's lung\nType help for further help."]
+        },
+       
+        {"tag": "medical",
+         "patterns": ["Which medical assistance do you have?", "What kinds of medical assistance are there?" ],
+         "responses": ["We analyze CT image of patient's lung.\nType help for further help."]
+        },
+        {"tag": "patient",
+         "patterns": ["I want to upload patient information.","Where can I upload patient information?","Patient" ],
+         "responses": ["Please upload patient information below."],
+         "context_set": ""
+        },
+        
+        {"tag": "image",
+         "patterns": ["I want to upload a image.","Upload image?","Where can I upload my image?","CT"],
+         "responses": ["Please upload your CT image below."],
+         "context_filter": "uploading"
+        },
+        {"tag": "help",
+         "patterns": ["I need some help.","Can any one help me?","help"],
+         "responses": ["Type patient for uploading patient information\nType CT for uploading CT image\nType results for explaination of results."]
+        },
+        {"tag": "results",
+         "patterns": ["What are meanings of results?","Can you explain more details about the results?","I have some questions about results.","results"],
+         "responses": ["There are three types of tumor:Normal, Benign, Malignant\nNormal:Everything is fine,nothing to worried about.\nBenign:Benign tumors tend to grow slowly and do not spread.It is controllable.\nMalignant:Malignant tumors can grow rapidly, invade and destroy nearby normal tissues, and spread throughout the body which is uncontrollable."]
+        },
+        {"tag": "doctor",
+         "patterns": ["Where can I find doctor?","I need to communicate with docter.","doctor"],
+         "responses": ["Please email doctor with XXXXX for further diagnose."]
+        },
+        {"tag": "None",
+         "patterns": [],
+         "responses": ["Sorry, I don't understand."]
+        }
+   ]
+}

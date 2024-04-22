@@ -1,0 +1,162 @@
+{% extends "layout.html" %} {% block content %}
+<style>
+  :root {
+    --dispHeader: none !important;
+  }
+
+  .delete-icon {
+    position: relative;
+  }
+
+  .delete-icon .delete-text {
+    display: flex;
+    color: red;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: -8px;
+    z-index: 100;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    float: right;
+  }
+  .delete-icon .delete-text:hover {
+    opacity: 0.7;
+  }
+</style>
+<div class="card container my-4">
+  <div class="modal-header">
+    <h5 class="modal-title">CT Images</h5>
+    <a
+      href="{{ url_for('ct_image', id=current_user.id) }}"
+      class="btn btn-primary btn-sm"
+      >Go Back</a
+    >
+  </div>
+
+  <div class="modal-content my-4">
+    <div class="modal-header">
+      <h5 class="modal-title" id="staticBackdropLabel">Upload CT Images</h5>
+    </div>
+    <form
+      action="{{ url_for('ct_image_uploads', id=patient.id) }}"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      <div class="modal-body">
+        <div class="input-group mb-3">
+          <div class="custom-file">
+            <input
+              type="file"
+              class="custom-file-input"
+              id="inputGroupFile"
+              name="images"
+              multiple
+            />
+            <label
+              class="custom-file-label"
+              for="inputGroupFile"
+              id="fileInputLabel"
+              >Choose images</label
+            >
+          </div>
+        </div>
+
+        <div class="card d-flex flex-row gap-1 row" id="imagePreview"></div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-sm btn-warning text-white"
+          id="clearImagesBtn"
+        >
+          Empty
+        </button>
+        <button type="submit" class="btn btn-sm btn-primary">Analyse</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-content mb-4">
+    <div class="modal-header">
+      <h5 class="modal-title" id="staticBackdropLabel">Preview CT Images</h5>
+    </div>
+    <div class="modal-body">
+      <!-- d-flex flex-row gap-2 p-0 -->
+      <div class="row">
+        {% for data in patient.ct_images %}
+
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="card gap-2">
+            <div
+              class="card-header align-self-end px-2 m-0 text-danger bg-white w-100"
+            >
+              <a
+                href="{{ url_for('delete_ctimage', patient_id=patient.id, path=data.image_file) }}"
+              >
+                <i class="fa fa-trash"></i>
+              </a>
+            </div>
+            <div class="d-flex flex-column align-items-center">
+              <img
+                class="card"
+                src="{{ url_for('static', filename='test_img/' + data.image_file) }}"
+                width="100"
+                height="100"
+                style="object-fit: contain; border-radius: 4px"
+              />
+              <p
+                class="text-center flex-wrap {{ 'text-danger' if data.diagnosis.startswith('Malignant') else 'text-secondary' }}  px-2"
+              >
+                {{ data.diagnosis }}
+              </p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document
+    .getElementById("inputGroupFile")
+    .addEventListener("change", function (event) {
+      const previewContainer = document.getElementById("imagePreview");
+      previewContainer.innerHTML = ""; // Clear previous images
+
+      const files = event.target.files;
+
+      if (files) {
+        for (const file of files) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const image = document.createElement("img");
+            image.src = e.target.result;
+            image.style = "object-fit:contain";
+            image.width = 75; // Set the width to 75 pixels
+            image.height = 75; // Set the height to 75 pixels
+            image.classList.add("img-thumbnail", "col-2");
+            previewContainer.appendChild(image);
+          };
+          reader.readAsDataURL(file);
+        }
+        document.getElementById("fileInputLabel").innerText =
+          files.length + " image(s) selected";
+      } else {
+        document.getElementById("fileInputLabel").innerText = "Choose images";
+      }
+    });
+  document
+    .getElementById("clearImagesBtn")
+    .addEventListener("click", function () {
+      document.getElementById("inputGroupFile").value = "";
+      const previewContainer = document.getElementById("imagePreview");
+      previewContainer.innerHTML = ""; // Clear all images
+      document.getElementById("fileInputLabel").innerText = "Choose images";
+    });
+</script>
+{% endblock content %}

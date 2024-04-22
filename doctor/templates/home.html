@@ -1,0 +1,84 @@
+{% extends "layout.html" %} {% block content %}
+
+<!-- ======= Featured Section ======= -->
+<section id="featured" class="featured" style="display: var(--dispHeader)">
+  <div class="container">
+    <div class="row">
+      {% if current_user.is_authenticated %}
+      <div class="col-md-6 col-lg-3 mt-4">
+        <div class="icon-box">
+          <i class="bi bi-thermometer-high"></i>
+          <h3>
+            <a href="{{ url_for('my_patients', id=current_user.id) }}"
+              >Patient</a
+            >
+          </h3>
+          <p>Click here to view and upload patients records</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 mt-4">
+        <div class="icon-box">
+          <i class="bi bi-file-earmark-medical"></i>
+          <h3>
+            <a href="{{ url_for('ct_image', id=current_user.id) }}">CT Image</a>
+          </h3>
+          <p>Click here to upload CT images</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mt-4">
+        <div class="icon-box">
+          <i class="bi bi-bar-chart-line-fill"></i>
+          <h3>
+            <a href="{{ url_for('analysis_patients', id=current_user.id) }}"
+              >Analysis</a
+            >
+          </h3>
+          <p>Click here to upload further analysis</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mt-4">
+        <div class="icon-box">
+          <i class="bi bi-people-fill"></i>
+          <h3><a href="/doctors">Doctors</a></h3>
+          <p>Explore Our Network: Meet the Doctors Who Trust Our Solution</p>
+        </div>
+      </div>
+      {% else %}
+      <div class="col-md-6 col-lg-3 mt-4">
+        <div class="icon-box">
+          <i class="bi bi-thermometer-high"></i>
+          <h3><a href="{{ url_for('login') }}">Patient</a></h3>
+          <p>Click here to view and upload patients records</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 mt-4">
+        <div class="icon-box">
+          <i class="bi bi-file-earmark-medical"></i>
+          <h3><a href="{{ url_for('login') }}">CT Image</a></h3>
+          <p>Click here to upload CT images</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mt-4">
+        <div class="icon-box">
+          <i class="bi bi-bar-chart-line-fill"></i>
+          <h3><a href="{{ url_for('login') }}">Analysis</a></h3>
+          <p>Click here to upload further analysis</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mt-4">
+        <div class="icon-box">
+          <i class="bi bi-people-fill"></i>
+          <h3><a href="{{ url_for('login') }}">Doctors</a></h3>
+          <p>Explore Our Network: Meet the Doctors Who Trust Our Solution</p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+<!-- End Featured Section -->
+{% endblock %}

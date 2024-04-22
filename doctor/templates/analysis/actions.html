@@ -1,0 +1,162 @@
+{% extends "layout.html" %} {% block content %}
+<style>
+  :root {
+    --dispHeader: none !important;
+  }
+
+  .delete-icon {
+    position: relative;
+  }
+  .delete-icon .delete-text {
+    display: flex;
+    color: red;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: -8px;
+    z-index: 100;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    float: right;
+  }
+  .delete-icon .delete-text:hover {
+    opacity: 0.7;
+  }
+</style>
+
+<div class="card container mt-4">
+  <div class="modal-header">
+    <h5 class="modal-title">Analysis Files</h5>
+    <a
+      href="{{ url_for('analysis_patients', id=current_user.id) }}"
+      class="btn btn-primary btn-sm"
+      >Go Back</a
+    >
+  </div>
+
+  <div class="modal-content my-4">
+    <div class="modal-header">
+      <h5 class="modal-title" id="staticBackdropLabel">Upload File Analysis</h5>
+    </div>
+    <form
+      action="{{ url_for('analysis_patients_upload', patient_id=patient.id) }}"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      <div class="modal-body">
+        <div class="form-group">
+          <input
+            type="text"
+            name="analysis_name"
+            class="form-control"
+            id="analysis_name"
+            placeholder="Name"
+            required
+          />
+        </div>
+
+        <div
+          class="custom-file d-flex justify-content-between align-items-center my-2 p-2 border"
+        >
+          <input
+            type="file"
+            name="analysis_file"
+            id="pdfInput"
+            accept=".pdf"
+            required
+          />
+        </div>
+        <div class="card d-flex flex-row gap-1 row" id="pdfPreviews"></div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-sm btn-warning text-white"
+          id="clearFilesBtn"
+        >
+          Empty
+        </button>
+        <button type="submit" class="btn btn-primary btn-sm">Analyse</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-content mb-4">
+    <div class="modal-header">
+      <h5 class="modal-title" id="staticBackdropLabel">
+        Preview File Analysis
+      </h5>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        {% for data in patient_analysis %}
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="card my-2">
+            <div
+              class="d-flex flex-row align-items-center justify-content-between p-2"
+            >
+              <a
+                href="{{ url_for('view_pdf', filename=data.file) }}"
+                class="badge bg-primary py-2 fs-6 w-75"
+                >Preview {{ data.name|capitalize }}
+              </a>
+              <a
+                class="px-3"
+                href="{{ url_for('delete_analysis_pdf', id=data.id, path=data.file, patient_id=data.patient_id) }}"
+              >
+                <i class="fa fa-trash"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document
+    .getElementById("pdfInput")
+    .addEventListener("change", function (event) {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+
+      const previewsContainer = document.getElementById("pdfPreviews");
+      previewsContainer.innerHTML = ""; // Clear previous previews
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const pdfData = e.target.result;
+          const iframe = document.createElement("iframe");
+          iframe.src = pdfData;
+          iframe.classList.add("col-3");
+          iframe.width = "150px";
+          iframe.height = "400px";
+          previewsContainer.appendChild(iframe);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+  document
+    .getElementById("clearFilesBtn")
+    .addEventListener("click", function () {
+      // Clear the analysis name input
+      document.getElementById("analysis_name").value = "";
+
+      // Clear the file input
+      var fileInput = document.getElementById("pdfInput");
+      fileInput.value = "";
+
+      // Clear the PDF previews container
+      var pdfPreviews = document.getElementById("pdfPreviews");
+      pdfPreviews.innerHTML = "";
+    });
+</script>
+
+{% endblock content %}

@@ -1,0 +1,116 @@
+{% extends "layout.html" %} {% block content %}
+<style>
+  :root {
+    --dispHeader: none !important;
+  }
+
+  .content-section {
+    margin-top: 60px;
+  }
+
+  .article-img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .article-title {
+    font-size: 1.7rem;
+    margin-top: 20px;
+  }
+
+  .post-details {
+    display: flex;
+    flex-direction: column;
+    margin-left: 15px;
+  }
+</style>
+
+<article class="card mt-5">
+  <div class="card-header d-flex justify-content-between px-3">
+    <div class="d-flex align-items-center">
+      <img
+        class="rounded-circle article-img"
+        src="{{ url_for('static', filename='profile_img/' + patient.doctor.image_file) }}"
+      />
+      <div class="post-details">
+        <a
+          class="mr-2"
+          href="{{ url_for('patients_user', username=patient.doctor.username) }}"
+          >{{ patient.doctor.username }}</a
+        >
+        <small class="text-muted">{{diffHumans(patient.date )}}</small>
+      </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center">
+      {% if patient.doctor == current_user %}
+      <div>
+        <!-- <a
+          class="btn btn-secondary btn-sm mt-1 mb-1"
+          href="{{ url_for('update_patient', patient_id=patient.id) }}"
+          >Update</a
+        > -->
+        <button
+          type="button"
+          class="btn btn-danger btn-sm m-1"
+          data-toggle="modal"
+          data-target="#deleteModal"
+        >
+          Delete
+        </button>
+        <a
+          href="{{ url_for('my_patients', id=current_user.id) }}"
+          class="btn btn-sm btn-warning text-white"
+          >Go Back</a
+        >
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="article-metadata"></div>
+    <h2 class="article-title">
+      {{ patient.firstname }} {{ patient.lastname }}
+    </h2>
+    <p class="article-content">{{ patient.diagnosis }}</p>
+  </div>
+</article>
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="deleteModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="deleteModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">
+          Delete Post? you're CT Images will be deleted
+        </h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+        <form
+          action="{{ url_for('delete_patient', patient_id=patient.id) }}"
+          method="POST"
+        >
+          <input class="btn btn-danger" type="submit" value="Delete" />
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,85 @@
+{% extends "layout.html" %} {% block content %}
+<style>
+  :root {
+    --dispHeader: none !important;
+  }
+
+  .content-section {
+    margin-top: 5vh;
+  }
+
+  .form-title {
+    padding-bottom: 10px;
+  }
+
+  .form-control-label {
+    margin-bottom: 10px;
+    margin-top: 3vh;
+  }
+
+  .btn-outline-info {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .btn-outline-info:hover {
+    color: white;
+  }
+</style>
+<!-- <script>
+  document.querySelectorAll(".nav-item").forEach((n) => {
+    if (n.innerText == "Posts") {
+      n.classList.add("active");
+    }
+  });
+</script> -->
+<div class="my-5">
+  <form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="card">
+      <div
+        class="card-header d-flex justify-content-between align-items-center"
+      >
+        <h5>{{ legend }}</h5>
+        <a
+          href="{{ url_for('posts') }}"
+          class="btn btn-warning btn-sm text-white"
+        >
+          Go Back</a
+        >
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          {{ form.title.label(class="form-control-label") }} {% if
+          form.title.errors %} {{ form.title(class="form-control form-control-lg
+          is-invalid") }}
+          <div class="invalid-feedback">
+            {% for error in form.title.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+          {% else %} {{ form.title(class="form-control form-control-lg") }} {%
+          endif %}
+        </div>
+        <div class="form-group">
+          {{ form.content.label(class="form-control-label") }} {% if
+          form.content.errors %} {{ form.content(class="form-control
+          form-control-lg is-invalid") }}
+          <div class="invalid-feedback">
+            {% for error in form.content.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+          {% else %} {{ form.content(class="form-control form-control-lg") }} {%
+          endif %}
+        </div>
+        <div class="form-group">
+          {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock content %}
