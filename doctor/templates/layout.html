@@ -32,6 +32,15 @@
     :root {
       --dispHeader: block !important;
     }
+    .nav-link {
+    color: #ccc !important;
+   }
+   .nav-link:hover{
+    color: #fff !important;
+   }
+   .nav-link.active{
+    color:  #fff !important;
+   }
   </style>
 
 </head>
@@ -257,6 +266,10 @@
       {% block content %}{% endblock %}
   </main>
 
+  <div id="preloader"></div>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"
+    ><i class="bi bi-arrow-up-short"></i
+  ></a>
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -334,5 +347,110 @@
       return `${h.slice(-2)}:${m.slice(-2)}`;
     }
   </script>
+
+
+
+  
+<script
+type="text/javascript"
+src="https://www.gstatic.com/charts/loader.js"
+></script>
+<script type="text/javascript">
+google.charts.load("current", { packages: ["corechart"] });
+google.charts.setOnLoadCallback(drawChart);
+function drawChart() {
+  var data = google.visualization.arrayToDataTable([
+    ["type", "percentage"],
+    ["Positive", 20],
+    ["Negative", 19],
+  ]);
+
+  var options = {
+    title: "",
+    is3D: true,
+  };
+
+  var chart = new google.visualization.PieChart(
+    document.getElementById("piechart_3d")
+  );
+  chart.draw(data, options);
+}
+</script>
+
+<script language="JavaScript">
+function drawChart() {
+  // Define the chart to be drawn.
+  var data = new google.visualization.DataTable();
+  data.addColumn("string", "Month");
+  data.addColumn("number", "Training_Accuracy");
+  data.addColumn("number", "Testing_Accuracy");
+
+  data.addRows([
+    ["10", 0.15, 0.14],
+    ["20", 0.82, 0.81],
+
+    ["30", 0.85, 0.86],
+    ["40", 0.91, 0.88],
+    ["50", 0.95, 0.94],
+  ]);
+
+  // Set chart options
+  var options = {
+    title: "",
+    hAxis: {
+      title: "Epoches",
+    },
+    vAxis: {
+      title: "Accuracy",
+    },
+    width: 550,
+    height: 400,
+  };
+
+  // Instantiate and draw the chart.
+  var chart = new google.visualization.LineChart(
+    document.getElementById("container")
+  );
+  chart.draw(data, options);
+}
+google.charts.setOnLoadCallback(drawChart);
+</script>
+
+<script
+type="text/javascript"
+src="https://www.gstatic.com/charts/loader.js"
+></script>
+<script type="text/javascript">
+google.charts.load("current", { packages: ["corechart", "line"] });
+</script>
+
+<script
+type="text/javascript"
+src="https://www.gstatic.com/charts/loader.js"
+></script>
+<script type="text/javascript">
+google.charts.load("current", { packages: ["corechart"] });
+google.charts.setOnLoadCallback(drawChart);
+function drawChart() {
+  var data = google.visualization.arrayToDataTable([
+    ["Type", "percentage"],
+    ["Cialis", 190],
+    ["Pakistan", 15][("South Africa", 15)][("Bangaladesh", 10)][
+      ("America", 20)
+    ][("Others", 20)],
+  ]);
+
+  var options = {
+    title: "",
+    is3D: true,
+  };
+
+  var chart = new google.visualization.PieChart(
+    document.getElementById("piechart_3d")
+  );
+  chart.draw(data, options);
+}
+</script>
+
   </body>
 </html>
