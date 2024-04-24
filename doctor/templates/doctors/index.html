@@ -146,7 +146,6 @@
                         >Chat</a
                       >
                     </div>
-
                     <!--  -->
                     {% endif %}
                     <!--  -->
@@ -158,18 +157,11 @@
               </tr>
             </table>
           </div>
-          <div class="media-body">
-            <p>
-              <span style="color: #e96b56; font-weight: 700">Activities: </span>
-              {{ doctor.posts | length }} Posts
-            </p>
-          </div>
         </div>
       </div>
     </div>
-
     {% endfor %}
   </div>
-</div>
 
-{% endblock content %}
+  {% endblock content %}
+</div>

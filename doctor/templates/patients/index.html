@@ -144,8 +144,7 @@
         {% for patient in patients.items %}
         <tr>
           <td class="username">
-            <!-- Create a hyperlink around the username -->
-            <a>
+            <a href="{{ url_for('diagnosises', user_id=patient.doctor.id) }}">
               {{ patient.doctor.username }}
             </a>
           </td>

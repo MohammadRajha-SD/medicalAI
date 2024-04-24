@@ -360,22 +360,15 @@ def save_picture_test(form_picture):
 # logic end
 
 # diagnosis start
-@app.route('/diagnosis/<int:user_id>')
+@app.route('/users/<int:user_id>/ct_iamges/')
 @login_required
 def diagnosises(user_id):
     if check_is_authenticated(user_id):
         page = request.args.get('page', 1, type=int)
         patients = Patient.query.filter_by(user_id=user_id).order_by(Patient.date.desc()).paginate(page=page, per_page=10)
-        return rt("diagnosis/all.html", patients=patients, diffHumans=naturaltime, check_request=check_request)
+        return rt("patients/all.html", patients=patients, diffHumans=naturaltime, check_request=check_request)
     else:
         return redirect(url_for('index'))
-
-@app.route('/diagnosis')
-@login_required
-def diagnosis():
-    page = request.args.get('page', 1, type=int)
-    patients = Patient.query.order_by(Patient.date.desc()).paginate(page=page, per_page=10)
-    return rt("diagnosis/index.html", patients=patients, diffHumans=naturaltime, check_request=check_request)
 # diagnosis end
 
 # patients start
@@ -407,7 +400,7 @@ def new_patient():
         db.session.add(patient)
         db.session.commit()
         flash('New patient added!', 'success')
-        return redirect(url_for('diagnosis'))
+        return redirect(url_for('my_patients',id=current_user.id))
     return rt('patients/create.html', title='New Patient', form=form, legend='New Patient', check_request=check_request)
 
 @app.route("/users/<int:id>/patient/<int:patient_id>")
