@@ -190,24 +190,30 @@ def ctimage_actions(patient_id,id):
 def ct_image_uploads(id):
     try:
         uploaded_files = request.files.getlist("images")
+
         for img in uploaded_files:
             patient_details = PatientDetails()
             patient_details.patient_id = id
+            
             pic_path = save_picture_test(img)
             path = 'doctor/static/test_img/' + pic_path
+            
             result = dcnn(path)
+            
             diagnosis = diagnose_text(result)
+            
             patient_details.image_file = pic_path
             patient_details.result = result
             patient_details.diagnosis = diagnosis
             db.session.add(patient_details)
             db.session.commit()
+
         return redirect(url_for('ctimage_actions', patient_id=id, id=current_user.id))
 
     except Exception as e:
-        flash('No files uploaded!', 'danger')
+        # Handle errors with flash message
+        flash('Error processing files: {}'.format(str(e)), 'danger')
         return redirect(url_for('ctimage_actions', patient_id=id, id=current_user.id))
-
 @app.route('/delete_image/<path:path>', methods=['GET'])
 def delete_image(path, dir='static/test_img'):
     try:
@@ -421,7 +427,7 @@ def chart():
 # chatbot
 @app.route('/jarvis')
 def jarvis():
-    return rt('chat/jarvis.html', title=jarvis, check_request=check_request)
+    return rt('jarvis.html', title=jarvis, check_request=check_request)
 
 if __name__ == '__main__':
     app.run(debug=True)

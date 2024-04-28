@@ -86,21 +86,24 @@
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
               <a class="nav-item nav-link" href="{{ url_for('chart')}}">Chart</a>
-              <a class="nav-item nav-link" href="{{ url_for('jarvis') }}">Support</a>
             </div>
 
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if current_user.is_authenticated %}
               <a class="nav-item nav-link" href="{{ url_for('my_patients', id=current_user.id) }}">Patients</a>
-              <a class="nav-item nav-link" href="{{ url_for('requests') }}">Requests</a>
+              
+              <a class="position-relative nav-item nav-link" href="{{ url_for('requests') }}">
+                Requests
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">{{ current_user.countRequests() }}</span>
+              </a>
               <a class="nav-item nav-link" href="{{ url_for('account') }}">Profile</a>
               <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
               <!-- Requests -->
-              
               {% set requests = check_request(current_user.id) %}
               {% if requests|length > 0 %}
               <li class="nav-item dropdown">
+            
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Doctors
                 </a>
@@ -115,14 +118,16 @@
                     </a>
                   </li>
                   <li class="p-0 m-0"><hr class="dropdown-divider m-0 p-0"></li>
+
+                  
                 {% endif %}
                 <!--  -->
                 {% endfor %}   
               </ul>
             </li>
             {% endif %}
+              <!-- Requests End -->
 
-              <!-- Requests -->
               {% else %}
               <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
               <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
@@ -278,75 +283,6 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
     integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
-
-  <!-- Chat bot -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src='https://use.fontawesome.com/releases/v5.0.13/js/all.js'></script>
-  <script>
-    const msgerForm = get(".msger-inputarea");
-    const msgerInput = get(".msger-input");
-    const msgerChat = get(".msger-chat");
-
-    // Icons made by Freepik from www.flaticon.com
-    const BOT_IMG = "https://image.flaticon.com/icons/svg/327/327779.svg";
-    const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
-    const BOT_NAME = "Jarvis";
-    const PERSON_NAME = "You";
-
-    msgerForm.addEventListener("submit", event => {
-      event.preventDefault();
-
-      const msgText = msgerInput.value;
-      if (!msgText) return;
-
-      appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText);
-      msgerInput.value = "";
-      botResponse(msgText);
-    });
-
-    function appendMessage(name, img, side, text) {
-      //   Simple solution for small apps
-      const msgHTML = `
-        <div class="msg ${side}-msg">
-          <div class="msg-img" style="background-image: url(${img})"></div>
-          <div class="msg-bubble">
-            <div class="msg-info">
-              <div class="msg-info-name">${name}</div>
-              <div class="msg-info-time">${formatDate(new Date())}</div>
-            </div>
-            <div class="msg-text">${text}</div>
-          </div>
-        </div>`;
-
-      msgerChat.insertAdjacentHTML("beforeend", msgHTML);
-      msgerChat.scrollTop += 500;
-    }
-
-    function botResponse(rawText) {
-      // Bot Response
-      $.get("/get", { msg: rawText }).done(function (data) {
-        console.log(rawText);
-        console.log(data);
-        const msgText = data;
-        appendMessage(BOT_NAME, BOT_IMG, "left", msgText);
-      });
-    }
-
-
-    // Utils
-    function get(selector, root = document) {
-      return root.querySelector(selector);
-    }
-
-    function formatDate(date) {
-      const h = "0" + date.getHours();
-      const m = "0" + date.getMinutes();
-      return `${h.slice(-2)}:${m.slice(-2)}`;
-    }
-  </script>
-
-
-
   
 <script
 type="text/javascript"
@@ -421,7 +357,7 @@ src="https://www.gstatic.com/charts/loader.js"
 google.charts.load("current", { packages: ["corechart", "line"] });
 </script>
 
-<script
+<script 
 type="text/javascript"
 src="https://www.gstatic.com/charts/loader.js"
 ></script>

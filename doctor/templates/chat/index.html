@@ -131,11 +131,10 @@
   function check() {
     localStorage.setItem("previousMessage", "");
   }
-  // Refresh the chat every 4 seconds
+  // Refresh the chat every  5  seconds
   window.onload = function () {
     // Retrieve previous scroll position from local storage
     let scrollableBody = document.getElementById("scrollable-body");
-    // Scroll to the bottom
     scrollableBody.scrollTop = scrollableBody.scrollHeight;
 
     let previousMessage = localStorage.getItem("previousMessage");
@@ -146,8 +145,8 @@
 
   function refreshChat() {
     let message = document.getElementById("message").value;
-    localStorage.setItem("previousMessage", message); // Store current message in local storage
-    window.location.reload(); // Reload the window
+    localStorage.setItem("previousMessage", message);
+    window.location.reload();
   }
 
   // Refresh the chat every 5 seconds

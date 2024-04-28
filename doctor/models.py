@@ -18,6 +18,10 @@ class User(db.Model, UserMixin):
     user = db.relationship('Request', backref='user', lazy=True, foreign_keys='Request.requester_id')
     user_receiver = db.relationship('Request', backref='user_receiver', lazy=True, foreign_keys='Request.receiver_id')
 
+    def countRequests(self):
+        rqst = Request.query.filter_by(receiver_id=self.id).all();
+        return len(rqst)
+
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
 
@@ -59,15 +63,6 @@ class Patient_analysis(db.Model):
     
     def __repr__(self):
         return f"Patient('{self.id}', '{self.file}', '{self.patient_id}' , '{self.name}')"
-
-class SharedData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    current_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    status = db.Column(db.String(50), default='pending')
-
-    # Define relationship with User model
-    current_user = db.relationship('User', foreign_keys=[current_user_id])
 
 class Request(db.Model):
     id = db.Column(db.Integer, primary_key=True)
